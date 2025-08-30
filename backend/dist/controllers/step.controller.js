@@ -185,17 +185,17 @@ class StepController {
     static async getStepsByPath(req, res, next) {
         try {
             const { pathId } = req.params;
-            console.log('StepController: Getting steps for path ID:', pathId);
+            console.log("StepController: Getting steps for path ID:", pathId);
             const steps = await step_service_1.default.getStepsByPath(pathId);
-            console.log('StepController: Found steps:', steps.length, 'steps');
+            console.log("StepController: Found steps:", steps.length, "steps");
             (0, helpers_1.sendSuccessResponse)(res, "Steps retrieved successfully", {
                 steps: steps.map((step) => ({
                     id: step.id,
-                    name: step.name,
+                    title: step.title,
                     description: step.description,
                     resourceLinks: step.resourceLinks,
                     order: step.order,
-                    path: step.path,
+                    pathId: step.pathId,
                     completedBy: step.completedBy,
                     completionCount: step.completionCount,
                     createdAt: step.createdAt,
@@ -205,7 +205,7 @@ class StepController {
             });
         }
         catch (error) {
-            console.log('StepController: Error getting steps:', error.message);
+            console.log("StepController: Error getting steps:", error.message);
             if (error.message === "Invalid path ID") {
                 (0, helpers_1.sendErrorResponse)(res, error.message, constants_1.HTTP_STATUS.BAD_REQUEST);
                 return;
@@ -215,28 +215,28 @@ class StepController {
     }
     static async getAllStepsDebug(req, res, next) {
         try {
-            console.log('StepController: Getting ALL steps for debugging');
+            console.log("StepController: Getting ALL steps for debugging");
             const steps = await step_service_1.default.getAllStepsForDebug();
-            console.log('StepController: Found', steps.length, 'total steps in database');
+            console.log("StepController: Found", steps.length, "total steps in database");
             (0, helpers_1.sendSuccessResponse)(res, "All steps retrieved for debugging", {
                 steps: steps.map((step) => ({
                     id: step.id,
-                    name: step.name,
+                    title: step.title,
                     description: step.description,
-                    path: step.path,
+                    pathId: step.pathId,
                     order: step.order,
                     resourceLinks: step.resourceLinks,
                     completedBy: step.completedBy,
                     completionCount: step.completionCount,
                     createdAt: step.createdAt,
                     updatedAt: step.updatedAt,
-                    fullStep: step
+                    fullStep: step,
                 })),
                 total: steps.length,
             });
         }
         catch (error) {
-            console.log('StepController: Error getting all steps:', error.message);
+            console.log("StepController: Error getting all steps:", error.message);
             (0, helpers_1.sendErrorResponse)(res, "Failed to fetch all steps", constants_1.HTTP_STATUS.INTERNAL_SERVER_ERROR);
         }
     }
@@ -250,11 +250,11 @@ class StepController {
             (0, helpers_1.sendSuccessResponse)(res, "Completed steps retrieved successfully", {
                 steps: steps.map((step) => ({
                     id: step.id,
-                    name: step.name,
+                    title: step.title,
                     description: step.description,
                     resourceLinks: step.resourceLinks,
                     order: step.order,
-                    path: step.path,
+                    pathId: step.pathId,
                     completedBy: step.completedBy,
                     completionCount: step.completionCount,
                     createdAt: step.createdAt,

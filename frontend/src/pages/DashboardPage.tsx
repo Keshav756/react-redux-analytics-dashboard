@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePaths } from '../hooks/usePaths';
 import { useAI } from '../context/AIContext';
@@ -10,6 +10,7 @@ import Button from '../components/shared/Button';
 import Loader from '../components/shared/Loader';
 
 const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const { paths, loading: pathsLoading, searchPaths } = usePaths();
   const { recommendations } = useAI();
@@ -139,7 +140,11 @@ const DashboardPage: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-secondary-900">Popular Learning Paths</h2>
-            <Button variant="secondary" size="sm">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate('/paths')}
+            >
               View All Paths
             </Button>
           </div>

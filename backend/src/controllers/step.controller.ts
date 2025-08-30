@@ -18,14 +18,14 @@ export class StepController {
   ): Promise<void> {
     try {
       const { pathId } = req.params;
-      const { name, description, resourceLinks, order }: CreateStepData =
+      const { title, description, resourceLinks, order }: CreateStepData =
         req.body;
 
       // Validate required fields
-      if (!name || !description || order === undefined) {
+      if (!title || !description || order === undefined) {
         sendErrorResponse(
           res,
-          "Name, description, and order are required",
+          "Title, description, and order are required",
           HTTP_STATUS.BAD_REQUEST
         );
         return;
@@ -33,9 +33,9 @@ export class StepController {
 
       // Create step data
       const stepData: CreateStepData = {
-        name,
+        title,
         description,
-        path: pathId,
+        pathId: pathId,
         order,
         resourceLinks: resourceLinks || [],
       };
@@ -48,11 +48,11 @@ export class StepController {
         {
           step: {
             id: step.id,
-            name: step.name,
+            title: step.title,
             description: step.description,
             resourceLinks: step.resourceLinks,
             order: step.order,
-            path: step.path,
+            pathId: step.pathId,
             completedBy: step.completedBy,
             completionCount: step.completionCount,
             createdAt: step.createdAt,
@@ -102,11 +102,11 @@ export class StepController {
       sendSuccessResponse(res, "Step updated successfully", {
         step: {
           id: step!.id,
-          name: step!.name,
+          title: step!.title,
           description: step!.description,
           resourceLinks: step!.resourceLinks,
           order: step!.order,
-          path: step!.path,
+          pathId: step!.pathId,
           completedBy: step!.completedBy,
           completionCount: step!.completionCount,
           createdAt: step!.createdAt,
@@ -198,11 +198,11 @@ export class StepController {
       sendSuccessResponse(res, "Step marked as completed", {
         step: {
           id: step!.id,
-          name: step!.name,
+          title: step!.title,
           description: step!.description,
           resourceLinks: step!.resourceLinks,
           order: step!.order,
-          path: step!.path,
+          pathId: step!.pathId,
           completedBy: step!.completedBy,
           completionCount: step!.completionCount,
           createdAt: step!.createdAt,
@@ -260,11 +260,11 @@ export class StepController {
       sendSuccessResponse(res, "Step marked as incomplete", {
         step: {
           id: step!.id,
-          name: step!.name,
+          title: step!.title,
           description: step!.description,
           resourceLinks: step!.resourceLinks,
           order: step!.order,
-          path: step!.path,
+          pathId: step!.pathId,
           completedBy: step!.completedBy,
           completionCount: step!.completionCount,
           createdAt: step!.createdAt,

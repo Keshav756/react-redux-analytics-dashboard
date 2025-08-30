@@ -7,6 +7,8 @@ export interface IPath extends Document {
   category: string;
   steps: mongoose.Types.ObjectId[];
   stepCount?: number;
+  estimatedTime?: number; // in hours
+  difficulty: "beginner" | "intermediate" | "advanced";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -54,6 +56,20 @@ const pathSchema = new Schema<IPath>(
         ref: "Step",
       },
     ],
+    estimatedTime: {
+      type: Number,
+      min: [1, "Estimated time must be at least 1 hour"],
+      max: [1000, "Estimated time cannot exceed 1000 hours"],
+    },
+    difficulty: {
+      type: String,
+      required: [true, "Difficulty is required"],
+      enum: {
+        values: ["beginner", "intermediate", "advanced"],
+        message: "Difficulty must be one of: beginner, intermediate, advanced",
+      },
+      default: "beginner",
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt

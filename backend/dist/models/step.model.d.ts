@@ -1,11 +1,11 @@
 import mongoose, { Document } from "mongoose";
 export interface IStep extends Document {
-    name: string;
+    title: string;
     description: string;
     resourceLinks: string[];
     completedBy: mongoose.Types.ObjectId[];
     order: number;
-    path: mongoose.Types.ObjectId;
+    pathId: mongoose.Types.ObjectId;
     completionCount?: number;
     createdAt: Date;
     updatedAt: Date;

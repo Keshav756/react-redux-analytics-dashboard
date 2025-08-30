@@ -104,7 +104,7 @@ class StepService {
                 error.statusCode = 404;
                 throw error;
             }
-            await path_model_1.default.findByIdAndUpdate(step.path, {
+            await path_model_1.default.findByIdAndUpdate(step.pathId, {
                 $pull: { steps: step._id },
             });
             await step_model_1.default.findByIdAndDelete(id);
@@ -190,7 +190,7 @@ class StepService {
     static async getStepsByPath(pathId) {
         try {
             console.log('StepService: Querying for steps with path ID:', pathId);
-            const steps = await step_model_1.default.find({ path: pathId })
+            const steps = await step_model_1.default.find({ pathId: pathId })
                 .populate("completedBy", "name email")
                 .sort({ order: 1 });
             console.log('StepService: Found', steps.length, 'steps for path', pathId);
@@ -261,7 +261,7 @@ class StepService {
     }
     static async getUserProgress(userId, pathId) {
         try {
-            const allSteps = await step_model_1.default.find({ path: pathId }).sort({ order: 1 });
+            const allSteps = await step_model_1.default.find({ pathId: pathId }).sort({ order: 1 });
             if (allSteps.length === 0) {
                 const error = new Error("No steps found for this path");
                 error.statusCode = 404;

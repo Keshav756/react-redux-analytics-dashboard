@@ -6,6 +6,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  enrolledPaths: mongoose.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -37,7 +38,14 @@ const userSchema = new Schema<IUser>(
       required: [true, 'Password is required'],
       minlength: [8, 'Password must be at least 8 characters long'],
       select: false // Don't include password in queries by default
-    }
+    },
+    enrolledPaths: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Path',
+        default: []
+      }
+    ]
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt

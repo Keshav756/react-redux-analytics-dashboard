@@ -5,6 +5,8 @@ export interface IPath extends Document {
     category: string;
     steps: mongoose.Types.ObjectId[];
     stepCount?: number;
+    estimatedTime?: number;
+    difficulty: "beginner" | "intermediate" | "advanced";
     createdAt: Date;
     updatedAt: Date;
 }

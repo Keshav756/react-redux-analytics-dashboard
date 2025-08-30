@@ -6,6 +6,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import PathDetailPage from './pages/PathDetailPage';
+import StepDetailPage from './pages/StepDetailPage';
+import LearningPathsPage from './pages/LearningPathsPage';
 
 // Placeholder components for other pages
 const PathsPage: React.FC = () => <div>Paths Page - Coming Soon</div>;
@@ -25,8 +27,9 @@ const App: React.FC = () => {
 
               {/* Protected Routes */}
               <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/paths" element={<PathsPage />} />
+              <Route path="/paths" element={<LearningPathsPage />} />
               <Route path="/paths/:id" element={<PathDetailPage />} />
+              <Route path="/paths/:pathId/steps/:stepId" element={<StepDetailPage />} />
               <Route path="/profile" element={<ProfilePage />} />
 
               {/* Redirect root to dashboard */}

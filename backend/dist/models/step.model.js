@@ -35,12 +35,12 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const stepSchema = new mongoose_1.Schema({
-    name: {
+    title: {
         type: String,
-        required: [true, "Step name is required"],
+        required: [true, "Step title is required"],
         trim: true,
-        minlength: [2, "Step name must be at least 2 characters long"],
-        maxlength: [100, "Step name cannot exceed 100 characters"],
+        minlength: [2, "Step title must be at least 2 characters long"],
+        maxlength: [100, "Step title cannot exceed 100 characters"],
     },
     description: {
         type: String,
@@ -73,10 +73,10 @@ const stepSchema = new mongoose_1.Schema({
         required: [true, "Step order is required"],
         min: [1, "Step order must be at least 1"],
     },
-    path: {
+    pathId: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "Path",
-        required: [true, "Path reference is required"],
+        required: [true, "PathId reference is required"],
     },
 }, {
     timestamps: true,
@@ -93,7 +93,7 @@ const stepSchema = new mongoose_1.Schema({
 stepSchema.virtual("completionCount").get(function () {
     return this.completedBy.length;
 });
-stepSchema.index({ path: 1, order: 1 }, { unique: true });
+stepSchema.index({ pathId: 1, order: 1 }, { unique: true });
 const Step = mongoose_1.default.model("Step", stepSchema);
 exports.default = Step;
 //# sourceMappingURL=step.model.js.map

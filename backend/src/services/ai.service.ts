@@ -382,7 +382,7 @@ export class AIService {
 
         personalizedPath.push({
           stepId: step._id.toString(),
-          name: step.name,
+          name: step.title,
           order: step.order,
           priority,
           estimatedTime,
@@ -446,7 +446,7 @@ export class AIService {
       // Recent activity (last 10 completed steps)
       const recentActivity = completedSteps.slice(0, 10).map((step) => ({
         pathTitle: (step as any).path.title,
-        stepName: step.name,
+        stepName: step.title,
         completedAt: step.updatedAt,
       }));
 

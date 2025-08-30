@@ -14,24 +14,12 @@ const PathDetailPage: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
   const { fetchPathById, loading: pathLoading } = usePaths();
   const { fetchSteps, loading: stepsLoading } = useSteps();
+  const { enrollInPath, unenrollFromPath } = usePaths();
 
   const [path, setPath] = useState<any>(null);
   const [steps, setSteps] = useState<any[]>([]);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
-
-  // Load enrolled paths from localStorage
-  useEffect(() => {
-    const storedEnrolledPaths = localStorage.getItem('enrolledPaths');
-    if (storedEnrolledPaths && id) {
-      try {
-        const parsed = JSON.parse(storedEnrolledPaths);
-        setIsEnrolled(parsed.includes(id));
-      } catch (error) {
-        console.error('Error parsing enrolled paths:', error);
-      }
-    }
-  }, [id]);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -50,7 +38,12 @@ const PathDetailPage: React.FC = () => {
         console.log('Loading path data for ID:', id);
         const pathData = await fetchPathById(id);
         console.log('Path data received:', pathData);
-        setPath(pathData);
+
+        // Set path and enrollment status from API response
+        if (pathData && pathData.path) {
+          setPath(pathData.path);
+          setIsEnrolled(pathData.isEnrolled || false);
+        }
 
         // Load steps for this path
         console.log('Fetching steps for path ID:', id);
@@ -73,27 +66,8 @@ const PathDetailPage: React.FC = () => {
 
     setEnrolling(true);
     try {
-      // Here you would typically call an enrollment API
-      // For now, we'll simulate enrollment locally with localStorage persistence
+      await enrollInPath(id);
       setIsEnrolled(true);
-
-      // Persist to localStorage
-      const storedEnrolledPaths = localStorage.getItem('enrolledPaths');
-      let enrolledPaths = [];
-      if (storedEnrolledPaths) {
-        try {
-          enrolledPaths = JSON.parse(storedEnrolledPaths);
-        } catch (error) {
-          console.error('Error parsing enrolled paths:', error);
-          enrolledPaths = [];
-        }
-      }
-
-      if (!enrolledPaths.includes(id)) {
-        enrolledPaths.push(id);
-        localStorage.setItem('enrolledPaths', JSON.stringify(enrolledPaths));
-      }
-
       console.log(`User ${user.id} enrolled in path ${path.id}`);
     } catch (error) {
       console.error('Error enrolling in path:', error);
@@ -227,7 +201,9 @@ const PathDetailPage: React.FC = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-secondary-600">Estimated Time</p>
-                <p className="text-2xl font-bold text-secondary-900">{path.stepCount * 2}h</p>
+                <p className="text-2xl font-bold text-secondary-900">
+                  {path.estimatedTime ? `${path.estimatedTime}h` : `${path.stepCount * 2}h`}
+                </p>
               </div>
             </div>
           </div>
@@ -241,7 +217,9 @@ const PathDetailPage: React.FC = () => {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-secondary-600">Difficulty</p>
-                <p className="text-2xl font-bold text-secondary-900">Beginner</p>
+                <p className="text-2xl font-bold text-secondary-900 capitalize">
+                  {path.difficulty || 'Beginner'}
+                </p>
               </div>
             </div>
           </div>
@@ -299,7 +277,7 @@ const PathDetailPage: React.FC = () => {
                       <Button
                         variant="secondary"
                         size="sm"
-                        onClick={() => console.log('Navigate to step:', step.id)}
+                        onClick={() => navigate(`/paths/${id}/steps/${step.id}`)}
                       >
                         View Step
                       </Button>

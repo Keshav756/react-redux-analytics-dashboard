@@ -3,15 +3,15 @@ import Path from "../models/path.model";
 import { CustomError } from "../middleware/errorHandler";
 
 export interface CreateStepData {
-  name: string;
+  title: string;
   description: string;
   resourceLinks?: string[];
   order: number;
-  path: string;
+  pathId: string;
 }
 
 export interface UpdateStepData {
-  name?: string;
+  title?: string;
   description?: string;
   resourceLinks?: string[];
   order?: number;
@@ -24,7 +24,7 @@ export class StepService {
   static async addStepToPath(stepData: CreateStepData): Promise<IStep> {
     try {
       // Verify that the path exists
-      const path = await Path.findById(stepData.path);
+      const path = await Path.findById(stepData.pathId);
       if (!path) {
         const error = new Error("Path not found") as CustomError;
         error.statusCode = 404;
@@ -36,7 +36,7 @@ export class StepService {
       await step.save();
 
       // Add step to path's steps array
-      await Path.findByIdAndUpdate(stepData.path, {
+      await Path.findByIdAndUpdate(stepData.pathId, {
         $push: { steps: step._id },
       });
 
@@ -71,7 +71,7 @@ export class StepService {
    */
   static async getStepById(id: string): Promise<IStep | null> {
     try {
-      const step = await Step.findById(id).populate("path", "title category");
+      const step = await Step.findById(id).populate("pathId", "title category");
 
       if (!step) {
         const error = new Error("Step not found") as CustomError;
@@ -109,7 +109,7 @@ export class StepService {
         id,
         { ...updateData, updatedAt: new Date() },
         { new: true, runValidators: true }
-      ).populate("path", "title category");
+      ).populate("pathId", "title category");
 
       if (!step) {
         const error = new Error("Step not found") as CustomError;
@@ -215,7 +215,7 @@ export class StepService {
         stepId,
         { $push: { completedBy: userObjectId } },
         { new: true }
-      ).populate("path", "title category");
+      ).populate("pathId", "title category");
 
       return updatedStep;
     } catch (error: any) {
@@ -271,7 +271,7 @@ export class StepService {
         stepId,
         { $pull: { completedBy: userObjectId } },
         { new: true }
-      ).populate("path", "title category");
+      ).populate("pathId", "title category");
 
       return updatedStep;
     } catch (error: any) {
@@ -310,8 +310,8 @@ export class StepService {
       if (steps.length > 0) {
         console.log('StepService: First step:', {
           id: steps[0]._id,
-          name: steps[0].name,
-          path: steps[0].path
+          title: steps[0].title,
+          pathId: steps[0].pathId
         });
       }
 
@@ -338,7 +338,7 @@ export class StepService {
       console.log('StepService: Getting ALL steps for debugging');
 
       const steps = await Step.find({})
-        .populate("path", "title category")
+        .populate("pathId", "title category")
         .sort({ createdAt: -1 });
 
       console.log('StepService: Found', steps.length, 'total steps in database');
@@ -347,9 +347,9 @@ export class StepService {
       steps.forEach((step, index) => {
         console.log(`Step ${index + 1}:`, {
           id: step._id,
-          name: step.name,
-          path: step.path,
-          pathTitle: (step as any).path?.title || 'Unknown',
+          title: step.title,
+          pathId: step.pathId,
+          pathTitle: (step as any).pathId?.title || 'Unknown',
           order: step.order,
           createdAt: step.createdAt
         });
@@ -370,7 +370,7 @@ export class StepService {
   static async getUserCompletedSteps(userId: string): Promise<IStep[]> {
     try {
       const steps = await Step.find({ completedBy: userId })
-        .populate("path", "title category")
+        .populate("pathId", "title category")
         .sort({ updatedAt: -1 });
 
       return steps;
@@ -400,7 +400,7 @@ export class StepService {
     completedCount: number;
     remainingSteps: Array<{
       id: string;
-      name: string;
+      title: string;
       order: number;
       description: string;
     }>;
@@ -429,7 +429,7 @@ export class StepService {
         .filter(step => !completedSteps.includes((step._id as any).toString()))
         .map(step => ({
           id: (step._id as any).toString(),
-          name: step.name,
+          title: step.title,
           order: step.order,
           description: step.description
         }));
